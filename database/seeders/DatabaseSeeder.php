@@ -16,7 +16,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-        
+        Roles::create([
+            'display_name' => 'Administrator',
+            'description' => 'Super Admin',
+        ]);
+
         User::create([
             'email' => 'admin@gmail.com',
             'name' => 'Admin',
@@ -24,9 +28,6 @@ class DatabaseSeeder extends Seeder
             'role_id' => 1
         ]);
 
-        Roles::create([
-            'display_name' => 'Administrator',
-            'description' => 'Super Admin',
-        ]);
+       
     }
 }

@@ -23,3 +23,5 @@ Admin View
 Email : admin@gmail.com
 Password :  password123
 
+Note: user create default password is "password123"
+
