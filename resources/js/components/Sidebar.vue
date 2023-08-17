@@ -10,7 +10,7 @@
             <template v-if="authUserId === 1">
                 <li class="menu-item text-white">
                     <span class="menu-label">   <i class="fa fa-user"></i> User Management</span>
-                
+             
                     <div></div>
                     <ul class="submenu list-unstyled">
                         <li class="submenu-item">
@@ -35,6 +35,8 @@
                     </li>
                 </ul>
             </li>
+
+            <change-component></change-component>
         </ul>
 
         <!-- Mini Sidebar Open Button -->

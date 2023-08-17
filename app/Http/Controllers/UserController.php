@@ -47,7 +47,19 @@ class UserController extends Controller
         $user->save();
     }
 
-
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string|min:8'
+        ]);
+    
+        $user = Auth::user();
+        $user->password = Hash::make($request->password);
+        $user->save();
+    
+        return response()->json(['message' => 'Password changed successfully'], 200);
+    }
+    
     public function getAllUser()
     {
         $users = User::with('role')->get();

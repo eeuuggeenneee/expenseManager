@@ -15,7 +15,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 
 axios.defaults.withCredentials = true;
-
+import Changepassword from './components/user/Changepassword.vue';
 import Sidebar from './components/Sidebar.vue';
 import Dashboard from './components/Dashboard.vue';
 import App from './components/App.vue';
@@ -49,6 +49,8 @@ const router = createRouter({
     routes,
 });
 
+
+app.component('change-component', Changepassword);
 app.component('sidebar-component', Sidebar);
 app.use(router);
 /**
