@@ -30,7 +30,11 @@
                                 <tr
                                     v-for="role in roles"
                                     :key="role.id"
-                                    @dblclick="showEditModal(role)"
+                                    @dblclick="
+                                        role.id !== 1
+                                            ? showEditModal(role)
+                                            : null
+                                    "
                                 >
                                     <td>{{ role.display_name }}</td>
                                     <td>{{ role.description }}</td>
