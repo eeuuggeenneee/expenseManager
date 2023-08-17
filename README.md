@@ -17,3 +17,9 @@ How to run this project:
     7. run the project "php artisan serve"
 
     8. On the other terminal "npm run dev"
+
+Admin View
+
+Email : admin@gmail.com
+Password :  password123
+
