@@ -55,7 +55,7 @@ export default {
         },
         async submitChangePassword() {
             try {
-                const response = await axios.post("/change-password", {
+                const response = await axios.post("/api/password/change", {
                     password: this.password,
                 });
                 if (response.data.message) {
