@@ -23,10 +23,10 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Expense Category</th>
                                     <th>Amount</th>
                                     <th>Entry Date</th>
+                                    <th>Created at</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -35,7 +35,6 @@
                                     :key="expense.id"
                                     @dblclick="showEditModal(expense)"
                                 >
-                                    <td>{{ expense.id }}</td>
                                     <td>
                                         {{
                                             getCategoryName(
@@ -45,6 +44,7 @@
                                     </td>
                                     <td>{{ expense.amount }}</td>
                                     <td>{{ expense.entry_date }}</td>
+                                    <td>{{ expense.created_at }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -221,7 +221,7 @@ export default {
             axios
                 .post("/api/expenses", this.newExpense)
                 .then((response) => {
-                    this.expenses.push(response.data.expense); // Adding the new expense to the list
+                    this.expenses.push(response.data.expense); 
                     this.flashMessage.content =
                         response.data.message || "Expense added successfully!";
                     this.flashMessage.visible = true;
@@ -231,7 +231,6 @@ export default {
                     }, 3000);
 
                     this.newExpense = {
-                        // Resetting the newExpense data object
                         expense_category_id: "",
                         amount: "",
                         entry_date: "",
@@ -251,9 +250,9 @@ export default {
                 });
         },
         updateExpense() {
-            const categoryID = this.modalExpense.id;
+            const expenseID = this.modalExpense.id;
             axios
-                .put(`/api/expenses/${categoryID}`, {
+                .put(`/api/expenses/${expenseID}`, {
                     expense_category_id: this.modalExpense.expense_category_id,
                     amount: this.modalExpense.amount,
                     entry_date: this.modalExpense.entry_date,
@@ -261,14 +260,20 @@ export default {
                 .then((response) => {
                     this.flashMessage.content =
                         response.data.message ||
-                        "Expense Category updated successfully!";
+                        "Expense updated successfully!";
                     this.flashMessage.visible = true;
 
                     setTimeout(() => {
                         this.flashMessage.visible = false;
                     }, 3000);
 
-                    this.showModal = false;
+                    const index = this.expenses.findIndex(
+                        (expense) => expense.id === expenseID
+                    );
+                    if (index !== -1) {
+                        this.expenses[index] = { ...this.modalExpense };
+                    }
+                    this.showEditExpenseModal = false;
                 })
                 .catch((error) => {
                     if (
@@ -278,8 +283,7 @@ export default {
                     ) {
                         this.flashMessage.content = error.response.data.message;
                     } else {
-                        this.flashMessage.content =
-                            "Error updating expense category!";
+                        this.flashMessage.content = "Error updating expense!";
                     }
                     this.flashMessage.visible = true;
 
@@ -287,24 +291,27 @@ export default {
                         this.flashMessage.visible = false;
                     }, 3000);
 
-                    console.error("Error updating expense category", error);
+                    console.error("Error updating expense", error);
                 });
         },
         deleteExpense() {
-            const categoryID = this.modalExpense.id;
+            const expenseID = this.modalExpense.id;
             axios
-                .delete(`/api/expenses/${categoryID}`)
+                .delete(`/api/expenses/${expenseID}`)
                 .then((response) => {
                     this.flashMessage.content =
                         response.data.message ||
-                        "Expense Category deleted successfully!";
+                        "Expense deleted successfully!";
                     this.flashMessage.visible = true;
 
                     setTimeout(() => {
                         this.flashMessage.visible = false;
                     }, 3000);
 
-                    this.showModal = false;
+                    this.expenses = this.expenses.filter(
+                        (expense) => expense.id !== expenseID
+                    );
+                    this.showEditExpenseModal = false;
                 })
                 .catch((error) => {
                     if (
@@ -314,8 +321,7 @@ export default {
                     ) {
                         this.flashMessage.content = error.response.data.message;
                     } else {
-                        this.flashMessage.content =
-                            "Error deleting expense category!";
+                        this.flashMessage.content = "Error deleting expense!";
                     }
                     this.flashMessage.visible = true;
 
@@ -323,7 +329,7 @@ export default {
                         this.flashMessage.visible = false;
                     }, 3000);
 
-                    console.error("Error deleting expense category", error);
+                    console.error("Error deleting expense", error);
                 });
         },
     },

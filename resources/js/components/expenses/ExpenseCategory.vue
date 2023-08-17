@@ -23,9 +23,10 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                               
                                     <th>Display Name</th>
                                     <th>Description</th>
+                                    <th>Created at</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -34,9 +35,10 @@
                                     :key="category.id"
                                     @dblclick="showEditModal(category)"
                                 >
-                                    <td>{{ category.id }}</td>
+                                    
                                     <td>{{ category.display_name }}</td>
                                     <td>{{ category.description }}</td>
+                                    <td>{{ category.created_at }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -175,6 +177,9 @@ export default {
                         this.flashMessage.visible = false;
                     }, 3000);
 
+                    this.categories = this.categories.filter(
+                        (category) => category.id !== categoryID
+                    );
                     this.showModal = false;
                 })
                 .catch((error) => {
@@ -214,6 +219,12 @@ export default {
                         this.flashMessage.visible = false;
                     }, 3000);
 
+                    const index = this.categories.findIndex(
+                        (category) => category.id === categoryID
+                    );
+                    if (index !== -1) {
+                        this.categories[index] = this.modalCategory;
+                    }
                     this.showModal = false;
                 })
                 .catch((error) => {
@@ -247,7 +258,12 @@ export default {
                     setTimeout(() => {
                         this.flashMessage.visible = false;
                     }, 3000);
-                    this.showModal = false;
+
+                    this.categories.push(this.modalCategory);
+
+                    this.showAddCategoryModal = false;
+
+
                     this.$router.push("/expense_category");
                 })
                 .catch((error) => {
@@ -264,6 +280,11 @@ export default {
                     setTimeout(() => {
                         this.flashMessage.visible = false;
                     }, 3000);
+
+
+        
+
+                    
 
                     console.error("There was an error:", error.response);
                 });

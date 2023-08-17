@@ -162,6 +162,9 @@ export default {
             axios
                 .delete(`/api/roles/${roleId}`)
                 .then((response) => {
+                    this.roles = this.roles.filter(
+                        (role) => role.id !== roleId
+                    );
                     this.flashMessage.content =
                         response.data.message || "Role deleted successfully!";
                     this.flashMessage.visible = true;
@@ -201,6 +204,12 @@ export default {
                     description: this.modalRole.description,
                 })
                 .then((response) => {
+                    const index = this.roles.findIndex(
+                        (role) => role.id === roleId
+                    );
+                    if (index !== -1) {
+                        this.roles[index] = { ...this.modalRole };
+                    }
                     this.flashMessage.content =
                         response.data.message || "Role updated successfully!";
                     this.flashMessage.visible = true;
@@ -235,14 +244,15 @@ export default {
             axios
                 .post("/api/roles", this.modalRole)
                 .then((response) => {
+                    this.roles.push(response.data.role); 
                     this.flashMessage.content = response.data.message;
                     this.flashMessage.visible = true;
 
                     setTimeout(() => {
                         this.flashMessage.visible = false;
                     }, 3000);
-
-                    this.$router.push("/roles");
+                    this.modalRole = { display_name: "", description: "" };
+                    this.showAddRoleModal = false;
                 })
                 .catch((error) => {
                     this.flashMessage.content = "Error creating role!";

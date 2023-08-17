@@ -10,13 +10,10 @@
                     <h3 class="mb-3">Users</h3>
                 </div>
                 <div class="col-md-6">
-                    <h4 class="text-md-right">
-                      User Management → User List
-                    </h4>
+                    <h4 class="text-md-right">User Management → User List</h4>
                 </div>
             </div>
         </div>
-     
 
         <div class="col-lg-10 col-sm-12">
             <div class="card">
@@ -24,10 +21,11 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                           
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Role</th>
+                                <th>Created at</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -36,7 +34,7 @@
                                 :key="user.id"
                                 @dblclick="showEditModal(user)"
                             >
-                                <td>{{ user.id }}</td>
+                            
                                 <td>{{ user.name }}</td>
                                 <td>{{ user.email }}</td>
                                 <td>
@@ -46,6 +44,7 @@
                                             : "N/A"
                                     }}
                                 </td>
+                                <td>{{ user.created_at }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -145,6 +144,12 @@ export default {
             axios
                 .put(`/api/users/${this.modalUser.id}`, this.modalUser)
                 .then((response) => {
+                    const index = this.users.findIndex(
+                        (user) => user.id === this.modalUser.id
+                    );
+                    if (index !== -1) {
+                        this.users[index] = { ...this.modalUser };
+                    }
                     this.flashMessage.content = response.data.message;
                     this.flashMessage.visible = true;
 
@@ -170,6 +175,9 @@ export default {
             axios
                 .delete(`/api/users/${this.modalUser.id}`)
                 .then((response) => {
+                    this.users = this.users.filter(
+                        (user) => user.id !== this.modalUser.id
+                    );
                     this.flashMessage.content =
                         response.data.message || "User deleted successfully!";
                     this.flashMessage.visible = true;
@@ -192,6 +200,11 @@ export default {
                     console.error("Error deleting user:", error.response);
                 });
         },
+        fetchUsers() {
+            axios.get("/api/users").then((response) => {
+                this.users = response.data;
+            });
+        },
         addUser() {
             const userData = {
                 name: this.newUser.name,
@@ -201,33 +214,33 @@ export default {
             axios
                 .post("/api/users", userData)
                 .then((response) => {
+                  
                     this.flashMessage.content =
                         response.data.message || "User added successfully!";
                     this.flashMessage.visible = true;
-
+                    this.newUser = { name: "", email: "" }; 
+                    this.selectedRole = null; 
                     setTimeout(() => {
                         this.flashMessage.visible = false;
                     }, 3000);
 
+                    this.fetchUsers();
                     this.showAddUserModal = false;
                 })
                 .catch((error) => {
                     this.flashMessage.content =
-                        error.response.data.message || "Error adding user!";
+                        (error.response && error.response.data.message) ||
+                        "Error adding user!";
                     this.flashMessage.visible = true;
-
                     setTimeout(() => {
                         this.flashMessage.visible = false;
                     }, 3000);
-
                     console.error("Error adding user:", error.response);
                 });
         },
     },
     mounted() {
-        axios.get("/api/users").then((response) => {
-            this.users = response.data;
-        });
+        this.fetchUsers();
         axios.get("/api/roles").then((response) => {
             this.roles = response.data;
         });
